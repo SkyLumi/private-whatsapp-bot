@@ -4,7 +4,7 @@ import ytdl from 'ytdl-core'
 import { downloadMediaMessage } from '@whiskeysockets/baileys'
 const sleep = ms => new Promise(res => setTimeout(res, ms));
 
-export async function printah(sock, id, cmd, pesan, msg, messageType) {
+export async function printah(sock, id, cmd, pesan, msg, messageType, group, groupParticipants, groupName) {
     
     const reactionMessage = {
     react: {
@@ -69,4 +69,55 @@ export async function printah(sock, id, cmd, pesan, msg, messageType) {
             await sock.sendMessage(id,{sticker: buffer})
         }
     }
+	else if (cmd === '🙏' && msg.pushName === 'Rafky') {
+        try {
+            const groupMetadata = await sock.groupMetadata(id);
+            const groupParticipants = groupMetadata.participants;
+
+            let mentions = [];
+            let teks = "bang";
+            let media = fs.readFileSync('src/tabtabitabtab.jpg')
+            let sticker = new Sticker(media, {
+                pack: "gtw malazz", // The pack name
+                author: 'mencoba bermanfaat', // The author name
+                type: StickerTypes.CROPPED,
+                categories: ["🤩", "🎉"], // The sticker category
+                id: "12345", // The sticker id
+                quality: 5, // The quality of the output file
+            });
+            const buffer = await sticker.toBuffer();
+
+            for (let participant of groupParticipants) {
+                mentions.push(participant.id);
+            }
+
+            await sock.sendMessage(id, {
+                sticker: buffer,
+                mentions: mentions
+            });
+        }
+        catch(error) {
+            console.error('Error di command 🙏:', error)
+        }
+	}
+    else if (cmd === '👍' && msg.pushName === 'Rafky') {
+        try {
+            const groupMetadata = await sock.groupMetadata(id);
+            const groupParticipants = groupMetadata.participants;
+
+            let mentions = [];
+            let teks = "@everyone";
+            for (let participant of groupParticipants) {
+                mentions.push(participant.id);
+            }
+
+            await sock.sendMessage(id, {
+                text: teks,
+                mentions: mentions
+            });
+        }
+        catch(error) {
+            console.error('Error di command 👍:', error)
+        }
+	}
 }
